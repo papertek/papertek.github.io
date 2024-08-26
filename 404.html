@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="refresh" content="2;url=https://camellia.wiki/" />
+    <meta http-equiv="refresh" content="5;url=https://camellia.wiki/" />
     <title>Camellia Wiki</title>
     <style>
       @font-face {
@@ -16,18 +16,7 @@
       }
       :root {
         --font-default: "Author", sans-serif;
-        /* new colors */
-        --colorPrimary: #f06c9b;
-        --colorSecondary: #b775f0;
-        --colorTriary: #661f57;
-        --colorLinks: #1ad1cb;
-        --colorLinksHover: #88e7e7;
-        --colorBorderTertiary: #854c68;
-        /* cards */
-        --colorCards: #382e37;
-        --colorCardDivisor: #453641;
-        --colorCardDivisorHover: #584a54;
-        --colorContentContainer: #2a2228;
+        --colorLinks: #f876d3;
         /* misc */
         --colorGray: #808080;
         --colorWhite: #ffffff;
@@ -35,27 +24,45 @@
       body {
         font-family: var(--font-default);
         font-size: 16px;
-        background: linear-gradient(180deg, rgba(240, 108, 155, 0.2) 0%, rgba(48, 37, 41, 0.2) 100%), #111;
-        color: var(--colorWhite);
-        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: stretch;
+        padding: 17px;
+        background-color: #45283d;
+        color: white;
         -webkit-font-smoothing: subpixel-antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
         backface-visibility: hidden;
       }
 
+      html,
+      body {
+        min-height: 100%;
+      }
+
       * {
         margin: 0;
         padding: 0;
       }
+
       #container {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        position: absolute;
+        margin: 50px;
+        flex-grow: 0;
         display: flex;
         flex-direction: column;
-        text-align: center;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        padding: 24px;
+        border-radius: 8px;
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.1),
+          0 32px 40px 0 rgba(0, 0, 0, 0.24);
+        background-color: rgba(40, 24, 36, 0.8);
       }
 
       #top,
@@ -69,9 +76,33 @@
 
       #top span {
         font-size: 42px;
+        font-weight: 300;
       }
       #bottom p {
+        text-align: center;
         font-size: 18px;
+      }
+
+      #bg {
+        position: relative;
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-end;
+        border-radius: 16px;
+      }
+
+      #gradient {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: absolute;
+        border-radius: 16px;
+
+        background: #0006 linear-gradient(180deg, transparent 0%, #281824 80%);
       }
 
       /* links */
@@ -81,27 +112,57 @@
       }
 
       a:hover {
-        color: var(--colorLinksHover);
-        text-decoration: none;
+        color: #f68384;
+        text-decoration: underline;
+      }
+
+      img#kong {
+        width: 100%;
+        height: 100%;
+        border-radius: 16px;
+        background-size: cover;
+        background-position: center;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* Scrollbar - Default (Not Vue) */
+      /* Common styles for Chrome, Safari, Edge */
+      ::-webkit-scrollbar {
+        width: 0px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-clip: padding-box;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #bbbbbb;
+      }
+      /* Firefox */
+      * {
+        scrollbar-width: none;
+        scrollbar-color: var(--colorWhite) transparent;
       }
     </style>
   </head>
   <body>
-    <div id="container">
-      <div id="top">
-        <h1>
-          <img
-            src="data:image/png;base64,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"
-          /><span>Camellia &#8226; Wiki</span>
-        </h1>
-      </div>
-      <div>&nbsp;</div>
-      <div id="bottom">
-        <p>
-          We have moved to a new domain.<br />
-          This page is only temporary and will be taken down eventually.<br />
-          If you aren't redirected automatically, please visit our new site <a href="https://camellia.wiki/">here</a>.
-        </p>
+    <div id="bg">
+      <div id="gradient"></div>
+      <img id="kong" src="/thisisfine.png" />
+      <div id="container">
+        <div id="top">
+          <h1>
+            <img
+              src="data:image/png;base64,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"
+            /><span>Camellia &#8226; Wiki</span>
+          </h1>
+        </div>
+        <div id="bottom">
+          <p>
+            We have moved to a new domain.<br />
+            This page is only temporary and will be taken down eventually.<br />
+            If you aren't redirected automatically, please visit our new site <a href="https://camellia.wiki/">here</a>.
+          </p>
+        </div>
       </div>
     </div>
   </body>
