@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="refresh" content="5;url=https://camellia.wiki/" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Camellia Wiki</title>
     <style>
@@ -54,6 +53,7 @@
       #container {
         position: absolute;
         margin: 50px;
+        flex-grow: 0;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -86,6 +86,25 @@
       #bottom p {
         text-align: center;
         font-size: 18px;
+      }
+
+      #bottom p span {
+        font-size: 16px;
+      }
+
+      #bottom span.big {
+        font-size: 20px;
+        font-weight: normal;
+      }
+
+      #linkBtns {
+        margin-top: 22px;
+        text-align: center;
+      }
+
+      #timer {
+        margin-top: 10px;
+        text-align: center;
       }
 
       #bg {
@@ -172,8 +191,10 @@
       }
     </style>
     <script type="text/javascript">
-      let lastIndex = -1;
-
+      const refresh = () => {
+        clearInterval(window.refreshI);
+        window.location.href = "https://camellia.wiki";
+      };
       const images = [
         "images/camepensive2.png",
         "images/thisisfine.png",
@@ -188,6 +209,7 @@
         "images/titulo.png",
       ];
 
+      let lastIndex = -1;
       function getRandomImage() {
         let randomIndex;
         do {
@@ -198,9 +220,32 @@
         lastIndex = randomIndex;
       }
 
-      window.onload = getRandomImage;
+      window.onload = () => {
+        getRandomImage();
+
+        let el = document.getElementById("attemptTime");
+        let elP = document.getElementById("attemptTimeParent");
+        let updateEl = (d) => {
+          if (!el) return;
+          if (elP) elP.style = "";
+          el.innerText = d;
+        };
+
+        window.refreshTime = 60;
+        updateEl(`${window.refreshTime} second${window.refreshTime == 1 ? "" : "s"}.`);
+        window.refreshI = setInterval(() => {
+          if (window.refreshTime <= 0) {
+            updateEl("progress!");
+            setTimeout(refresh, 500);
+            return;
+          }
+          window.refreshTime--;
+          updateEl(`${window.refreshTime} second${window.refreshTime == 1 ? "" : "s"}.`);
+        }, 1000);
+      };
     </script>
   </head>
+
   <body>
     <div id="bg">
       <div id="gradient"></div>
@@ -218,8 +263,16 @@
           <p>
             We have moved to a new domain.<br />
             This page is only temporary and will be taken down eventually.<br />
-            If you aren't redirected automatically, please visit our new site <a href="https://camellia.wiki/">here</a>.
+            If you aren't redirected in one minute, please click on Redirect Now. <br />
+            Have some cookies.
           </p>
+          <div id="linkBtns">
+            <span class="big"> <a href="javascript:refresh()">Redirect Now</a></span>
+          </div>
+          <div id="timer">
+            <span id="attemptTimeParent" style="display: none"> Automatic redirect in <span id="attemptTime">...</span></span>
+            <noscript><span>Automatic redirect disabled; enable JavaScript.</span></noscript>
+          </div>
         </div>
       </div>
     </div>
