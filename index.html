@@ -231,7 +231,7 @@
           el.innerText = d;
         };
 
-        window.refreshTime = 60;
+        window.refreshTime = 5;
         updateEl(`${window.refreshTime} second${window.refreshTime == 1 ? "" : "s"}.`);
         window.refreshI = setInterval(() => {
           if (window.refreshTime <= 0) {
@@ -262,9 +262,8 @@
         <div id="bottom">
           <p>
             We have moved to a new domain.<br />
-            This page is only temporary and will be taken down eventually.<br />
-            If you aren't redirected in one minute, please click on Redirect Now. <br />
-            Have some cookies.
+            This page is only temporary and will be repurposed eventually.<br />
+            If you aren't redirected in five seconds, please click on Redirect Now.
           </p>
           <div id="linkBtns">
             <span class="big"> <a href="javascript:refresh()">Redirect Now</a></span>
