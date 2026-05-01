@@ -1,16 +1,6 @@
 <script lang="ts">
     import NetroGlobe from '$lib/components/assets/NetroGlobe.svelte';
-    import type { Article } from '$lib/utils/types.js';
     import { onMount } from 'svelte';
-
-    let blogArticles = $state<Article[]>([]);
-    let loading = $state(true);
-    onMount(async () => {
-        const res = await fetch('/api/articles?type=blog'),
-            articles: Article[] = await res.json();
-        blogArticles = articles.slice(0, 2);
-        loading = false;
-    });
 </script>
 
 <svelte:head>

@@ -24,10 +24,6 @@ const mdsvexOptions = {
         }
     },
     rehypePlugins: [rehypeFigure],
-    layout: {
-        _: path.join(dirname, './src/lib/components/mdsvex_layouts/DefaultLayout.svelte'),
-        blog: path.join(dirname, './src/lib/components/mdsvex_layouts/BlogLayout.svelte')
-    }
 };
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -35,7 +31,14 @@ const config = {
     extensions: ['.svelte', '.md'],
     preprocess: [vitePreprocess(), mdsvex(mdsvexOptions)],
     kit: {
-        adapter: adapter()
+        adapter: adapter({
+      pages: 'build',
+      assets: 'build',
+      fallback: undefined,
+      precompress: false,
+      strict: true
+    }),
+
     }
 };
 
