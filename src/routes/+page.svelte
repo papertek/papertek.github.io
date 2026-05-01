@@ -14,7 +14,8 @@
                    width: 1400px !important; 
                    height: 1400px !important; 
                    object-position: bottom right !important; 
-                   mix-blend-mode: screen; 
+                   mix-blend-mode: screen;
+                   opacity: 0.8;
                    transform: translate(47%, 0%);"
         />
     </div>
