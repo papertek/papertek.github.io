@@ -6,6 +6,7 @@
     import DevBanner from '$lib/components/DevBanner.svelte';
     import { onMount, type Snippet } from 'svelte';
     import '../styles/tailwind.css';
+    import Footer from '$lib/components/Footer.svelte';
 
     let { children }: { children: Snippet } = $props();
 
@@ -24,4 +25,5 @@
     <h1 class="text-5xl font-bold">{page?.data?.title}</h1>
     {@render children()}
 </main>
+<Footer />
 <DevBanner />
