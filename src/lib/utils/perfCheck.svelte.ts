@@ -53,9 +53,11 @@ export async function runFullPerfCheck(threshold = DEFAULT_THRESHOLD, duration =
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 
+    console.log('Performance check complete, checking post-initial performance...');
     const postFps = await getFps(duration);
+    console.log(`Post-initial performance: ${postFps} FPS`);
     if (postFps < threshold) {
-        console.error('Bad waves performance, unmounting');
+        console.error('Danger! bad webgl performance, unmounting');
         perfStatus.canRunWebGL = false;
     }
 }

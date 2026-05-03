@@ -11,12 +11,9 @@
 
     onMount(async () => {
         await runFullPerfCheck();
-
-        console.log('hello there! im running in layout');
-
         if (perfStatus.canRunWebGL && typeof UnicornStudio !== 'undefined') {
             UnicornStudio.init().catch(console.error);
-            console.log('unicorn loaded');
+            console.log('unicorn has been initalized');
         }
     });
 </script>
