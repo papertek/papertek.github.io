@@ -1,21 +1,24 @@
 <script lang="ts">
-    import { afterNavigate } from '$app/navigation';
+    import { runFullPerfCheck, perfStatus } from '$lib/utils/perfCheck.svelte.js';
     import { page } from '$app/state';
-    import { dev } from '$app/environment';
     import Waves from '$lib/components/assets/Waves.svelte';
     import DevBanner from '$lib/components/DevBanner.svelte';
+    import Footer from '$lib/components/Footer.svelte';
     import { onMount, type Snippet } from 'svelte';
     import '../styles/tailwind.css';
-    import Footer from '$lib/components/Footer.svelte';
 
     let { children }: { children: Snippet } = $props();
 
-    function initUnicorn() {
-        UnicornStudio.init().catch(console.error);
-    }
+    onMount(async () => {
+        await runFullPerfCheck();
 
-    onMount(initUnicorn);
-    afterNavigate(initUnicorn);
+        console.log('hello there! im running in layout');
+
+        if (perfStatus.canRunWebGL && typeof UnicornStudio !== 'undefined') {
+            UnicornStudio.init().catch(console.error);
+            console.log('unicorn loaded');
+        }
+    });
 </script>
 
 <main class="font-display flex flex-col px-21 py-16">
