@@ -17,6 +17,10 @@
     ></div>
 
     {#if perfStatus.canRunWebGL && perfStatus.isChecked}
+        <script>
+            console.log('performanced passed in globe component, loading to layout...');
+        </script>
+
         <div
             class="unicorn-embed pointer-events-none absolute inset-0 z-1"
             data-us-project-src={wavesType}
