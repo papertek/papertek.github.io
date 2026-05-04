@@ -11,8 +11,13 @@
     let { children }: { children: Snippet } = $props();
 
     let hasInitialized = false;
+    let isInitializing = false; // Add this guard
 
     async function attemptUnicornInit() {
+        if (isInitializing || hasInitialized) return;
+
+        isInitializing = true;
+
         if (!perfStatus.isChecked) {
             await runFullPerfCheck();
         }
@@ -31,6 +36,7 @@
                 console.error('failed to load unicorn', e);
             }
         }
+        isInitializing = false;
     }
     onMount(attemptUnicornInit);
     afterNavigate(() => {

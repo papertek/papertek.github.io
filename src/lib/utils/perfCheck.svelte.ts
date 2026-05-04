@@ -16,12 +16,11 @@ const getFps = (duration: number): Promise<number> => {
         let frames = 0;
         const start = performance.now();
         const check = (now: number) => {
-            frames++;
-            const elapsed = now - start;
-            if (elapsed >= duration) {
-                resolve((frames * 1000) / elapsed);
+            if (now - start >= duration) {
+                resolve(frames);
                 return;
             }
+            frames++;
             requestAnimationFrame(check);
         };
         requestAnimationFrame(check);
