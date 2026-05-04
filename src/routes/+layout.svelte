@@ -24,9 +24,7 @@
 
                 await runFullPerfCheck(true);
 
-                if (!perfStatus.canRunWebGL) {
-                    console.warn('danger! bad webgl performance');
-                } else {
+                if (perfStatus.canRunWebGL) {
                     console.log('performance test passed!');
                 }
             } catch (e) {

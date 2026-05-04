@@ -29,7 +29,7 @@ const getFps = (duration: number): Promise<number> => {
 };
 
 // we check for performance before we enable the webby gl
-export async function runFullPerfCheck(threshold = DEFAULT_THRESHOLD, duration = DEFAULT_DURATION, force = false) {
+export async function runFullPerfCheck(force = false) {
     if (!browser) return;
 
     // if we already checked performance and we're not forcing a recheck, return
@@ -44,8 +44,8 @@ export async function runFullPerfCheck(threshold = DEFAULT_THRESHOLD, duration =
         return;
     }
 
-    const initialFps = await getFps(duration);
-    if (initialFps < threshold) {
+    const initialFps = await getFps(DEFAULT_DURATION);
+    if (initialFps < DEFAULT_THRESHOLD) {
         perfStatus.isChecked = true;
         perfStatus.canRunWebGL = false;
         return;
@@ -57,19 +57,19 @@ export async function runFullPerfCheck(threshold = DEFAULT_THRESHOLD, duration =
     console.log('Waiting for 500ms before checking website loading performance...');
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const postFps = await getFps(duration);
+    const postFps = await getFps(DEFAULT_DURATION);
     console.log(`Post-initial performance: ${postFps} FPS`);
-    if (postFps < threshold) {
+    if (postFps < DEFAULT_THRESHOLD) {
         console.error('Danger! bad webgl performance, unmounting');
         perfStatus.canRunWebGL = false;
     }
 
     if (force) {
-        console.log('Forced recheck: waiting for 500ms before final performance check...');
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        const postFps = await getFps(2000);
+        console.log('Forced recheck: waiting for 1000ms before final performance check...');
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const postFps = await getFps(1000);
+        console.log(`Final performance check: ${postFps} FPS`);
         if (postFps < DEFAULT_THRESHOLD) {
-            console.log(`Final performance check: ${postFps} FPS`);
             console.error('Danger! bad webgl performance, unmounting');
             perfStatus.canRunWebGL = false;
             return;
