@@ -51,8 +51,8 @@ export async function runFullPerfCheck(threshold = DEFAULT_THRESHOLD, duration =
     perfStatus.canRunWebGL = true;
     perfStatus.isChecked = true;
 
-    console.log('Waiting for 3000ms before checking post-initial performance...');
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log('Waiting for 1000ms before checking website loading performance...');
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const postFps = await getFps(duration);
     console.log(`Post-initial performance: ${postFps} FPS`);

@@ -20,7 +20,10 @@
             try {
                 await UnicornStudio.init();
                 hasInitialized = true;
-                console.log('initial unicorn loaded');
+                console.log('unicorn loaded');
+                console.log('Running post-initial performance check...');
+                await runFullPerfCheck();
+                console.log('performance test passed!');
             } catch (e) {
                 console.error('failed to load unicorn', e);
             }
