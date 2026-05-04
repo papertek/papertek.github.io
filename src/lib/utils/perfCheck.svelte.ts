@@ -8,25 +8,29 @@ export const perfStatus = $state({
 });
 
 const DEFAULT_THRESHOLD = 45; // frames
-const DEFAULT_DURATION = 1000; // miliseconds
+const DEFAULT_DURATION = 2000; // miliseconds
 
 // fps counter using requestAnimationFrame
-const getFps = (duration: number): Promise<number> => {
+export async function getFps(duration = DEFAULT_DURATION) {
     return new Promise((resolve) => {
         let frames = 0;
-        const start = performance.now();
-        const check = (now: number) => {
-            if (now - start >= duration) {
-                resolve(frames);
+        const startTime = performance.now();
+        console.log(`[Perf] Measuring FPS for ${duration}ms...`);
+
+        function check() {
+            const elapsed = performance.now() - startTime;
+            if (elapsed >= duration) {
+                const fps = Math.round((frames * 1000) / elapsed);
+                console.log(`[Perf] Final Reading: ${fps} FPS`);
+                resolve(fps);
                 return;
             }
             frames++;
             requestAnimationFrame(check);
-        };
+        }
         requestAnimationFrame(check);
     });
-};
-
+}
 // we check for performance before we enable the webby gl
 export async function runFullPerfCheck(force = false) {
     if (!browser) return;
@@ -43,7 +47,8 @@ export async function runFullPerfCheck(force = false) {
         return;
     }
 
-    const initialFps = await getFps(DEFAULT_DURATION);
+    const initialFps = (await getFps(DEFAULT_DURATION)) as number;
+
     if (initialFps < DEFAULT_THRESHOLD) {
         perfStatus.isChecked = true;
         perfStatus.canRunWebGL = false;
@@ -53,10 +58,10 @@ export async function runFullPerfCheck(force = false) {
     perfStatus.canRunWebGL = true;
     perfStatus.isChecked = true;
 
-    console.log('Waiting for 500ms before checking website loading performance...');
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    // console.log('Waiting for 500ms...');
+    // await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const postFps = await getFps(DEFAULT_DURATION);
+    const postFps = (await getFps(DEFAULT_DURATION)) as number;
     console.log(`Post-initial performance: ${postFps} FPS`);
     if (postFps < DEFAULT_THRESHOLD) {
         console.error('Danger! bad webgl performance, unmounting');
@@ -64,10 +69,10 @@ export async function runFullPerfCheck(force = false) {
     }
 
     if (force) {
-        console.log('Forced recheck: waiting for 1000ms before final performance check...');
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        const postFps = await getFps(1000);
-        console.log(`Final performance check: ${postFps} FPS`);
+        console.log('// Forced recheck: waiting for 2000ms before final performance check... //');
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        const postFps = (await getFps(DEFAULT_DURATION)) as number;
+        console.log(`// Final performance check: ${postFps} FPS //`);
         if (postFps < DEFAULT_THRESHOLD) {
             console.error('Danger! bad webgl performance, unmounting');
             perfStatus.canRunWebGL = false;
