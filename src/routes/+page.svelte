@@ -28,6 +28,7 @@
                 We're a small software collective creating what we love. It's not only because we want to, we need to. We collaborate to
                 create what's next.
             </p>
+            <a href="/testpage" class="text-blue-500 hover:underline">testpage</a>
         </span>
     </div>
 </section>

@@ -2,6 +2,7 @@
     import { runFullPerfCheck, perfStatus } from '$lib/utils/perfCheck.svelte.js';
     import { page } from '$app/state';
     import Waves from '$lib/components/assets/Waves.svelte';
+    import { afterNavigate } from '$app/navigation';
     import DevBanner from '$lib/components/DevBanner.svelte';
     import Footer from '$lib/components/Footer.svelte';
     import { onMount, type Snippet } from 'svelte';
@@ -9,11 +10,27 @@
 
     let { children }: { children: Snippet } = $props();
 
-    onMount(async () => {
-        await runFullPerfCheck();
-        if (perfStatus.canRunWebGL && typeof UnicornStudio !== 'undefined') {
+    let hasInitialized = false;
+
+    async function attemptUnicornInit() {
+        if (!perfStatus.isChecked) {
+            await runFullPerfCheck();
+        }
+        if (perfStatus.canRunWebGL && typeof UnicornStudio !== 'undefined' && !hasInitialized) {
+            try {
+                await UnicornStudio.init();
+                hasInitialized = true;
+                console.log('initial unicorn loaded');
+            } catch (e) {
+                console.error('failed to load unicorn', e);
+            }
+        }
+    }
+    onMount(attemptUnicornInit);
+    afterNavigate(() => {
+        if (hasInitialized && typeof UnicornStudio !== 'undefined') {
             UnicornStudio.init().catch(console.error);
-            console.log('unicorn has been initalized');
+            console.log('page rescanned');
         }
     });
 </script>
