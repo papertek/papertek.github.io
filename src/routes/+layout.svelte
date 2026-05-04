@@ -16,14 +16,19 @@
         if (!perfStatus.isChecked) {
             await runFullPerfCheck();
         }
+
         if (perfStatus.canRunWebGL && typeof UnicornStudio !== 'undefined' && !hasInitialized) {
             try {
                 await UnicornStudio.init();
                 hasInitialized = true;
-                console.log('unicorn loaded');
-                console.log('Running post-initial performance check...');
-                await runFullPerfCheck();
-                console.log('performance test passed!');
+
+                await runFullPerfCheck(true);
+
+                if (!perfStatus.canRunWebGL) {
+                    console.warn('danger! bad webgl performance');
+                } else {
+                    console.log('performance test passed!');
+                }
             } catch (e) {
                 console.error('failed to load unicorn', e);
             }
