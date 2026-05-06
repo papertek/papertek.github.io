@@ -8,17 +8,6 @@
 </svelte:head>
 
 <section class="relative -my-16 -mr-21 grid min-h-screen grid-cols-[1fr_410px] grid-rows-[auto_auto]">
-    <div class="pointer-events-none absolute inset-0 overflow-hidden">
-        <NetroGlobe
-            style="position: absolute !important; 
-                   width: 1400px !important; 
-                   height: 1400px !important; 
-                   object-position: bottom right !important; 
-                   mix-blend-mode: screen;
-                   opacity: 0.8;
-                   transform: translate(47%, 0%);"
-        />
-    </div>
     <div class="transform-0 col-start-1 row-start-1 flex flex-col items-start gap-12">
         <div class="pt-21"></div>
         <span class="font-display max-w-194 text-xl">

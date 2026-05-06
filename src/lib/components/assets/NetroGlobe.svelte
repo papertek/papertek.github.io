@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { perfStatus } from '$lib/utils/perfCheck.svelte.js';
-    import { onDestroy } from 'svelte';
-
-    let embedEl: HTMLDivElement | undefined = $state();
+    import { onMount, tick } from 'svelte';
+    import performanceStore from '$lib/stores/performance.js';
+    import { initIfAllowed, resetUnicornLifecycle } from '$lib/utils/unicornLifecycle.js';
+    import { afterNavigate, beforeNavigate } from '$app/navigation';
 
     let {
         style = '',
@@ -12,16 +12,39 @@
         backgroundSize = 'contain'
     } = $props();
 
-    onDestroy(() => {
-        if (embedEl) {
-            const canvas = embedEl.querySelector('canvas');
-            if (canvas) {
-                const gl = canvas.getContext('webgl') || canvas.getContext('webgl2');
-                gl?.getExtension('WEBGL_lose_context')?.loseContext();
+    let useWebgl = $state(false);
+    let perfChecked = $state(false);
+    let embedEl = $state<HTMLDivElement | null>(null);
+    let unicornStarted = false;
+
+    async function startUnicorn() {
+        if (unicornStarted) return;
+        unicornStarted = true;
+        await tick();
+        await initIfAllowed(embedEl);
+    }
+
+    function doUnicornStuff() {
+        const unsubscribe = performanceStore.subscribe((state) => {
+            if (!state.checked) return;
+            if (state.canUseWebgl && !state.globalHardDisabled) {
+                useWebgl = true;
+                perfChecked = true;
+                startUnicorn().catch((e) => console.error('Unicorn init (globe) failed', e));
+            } else {
+                useWebgl = false;
+                perfChecked = false;
             }
-            embedEl.remove();
-            console.log('globe component removed');
-        }
+        });
+
+        return () => {
+            unsubscribe();
+        };
+    }
+
+    // check unicornLifecycle.ts
+    onMount(() => {
+        doUnicornStuff();
     });
 </script>
 
@@ -31,11 +54,7 @@
         style="background-image: url({backgroundImage}); background-size: {backgroundSize}; background-position: center;"
     ></div>
 
-    {#if perfStatus.canRunWebGL && perfStatus.isChecked}
-        <script>
-            console.log('performanced passed in globe component, loading to layout...');
-        </script>
-
+    {#if useWebgl && perfChecked}
         <div
             bind:this={embedEl}
             class="unicorn-embed pointer-events-none absolute inset-0 z-1"
