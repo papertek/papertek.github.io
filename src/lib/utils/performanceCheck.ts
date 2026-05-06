@@ -5,7 +5,7 @@ import { get } from 'svelte/store';
 let cachedCheck: Promise<void> | null = null;
 
 export const DEFAULT_FPS_THRESHOLD = 45;
-export const DEFAULT_FPS_SAMPLE_MS = 1000;
+export const DEFAULT_FPS_SAMPLE_MS = 2000;
 
 export const fpsMonitor = (duration: number): Promise<number> => {
     return new Promise((resolve) => {
@@ -44,14 +44,23 @@ export async function runGlobalPerformanceCheck(opts?: { duration?: number; fpsT
             const can = initialFps >= fpsThreshold;
             const disableReason = can ? null : 'low-fps';
             performanceStore.update((s: PerformanceState) => ({ ...s, checked: true, canUseWebgl: can, initialFps, disableReason }));
-
         } catch (e) {
             performanceStore.update((s: PerformanceState) => ({ ...s, checked: true, canUseWebgl: false, disableReason: 'error' }));
             console.error('Global performance check error', e);
         }
-  })();
+    })();
 
-  return cachedCheck;
+    const initialFps = await fpsMonitor(duration);
+    const can = initialFps >= fpsThreshold;
+
+    performanceStore.update((s) => ({
+        ...s,
+        checked: true,
+        canUseWebgl: can,
+        initialFps
+    }));
+
+    return cachedCheck;
 }
 
 export default runGlobalPerformanceCheck;

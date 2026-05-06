@@ -7,12 +7,6 @@ let unicornInitialized = false;
 
 const POST_INIT_SAMPLE_MS = 400;
 
-// should we be doing this? this is mostly for NetroGlobe.svelte but it affects everything
-export function resetUnicornLifecycle() {
-    unicornInitialized = false;
-    initPromise = null;
-}
-
 export async function initIfAllowed(embedEl?: HTMLElement | null) {
     if (!embedEl) return;
     const state = get(performanceStore);
@@ -39,10 +33,10 @@ export async function initIfAllowed(embedEl?: HTMLElement | null) {
             }));
 
             if (shouldDisable) {
-                markGlobalFailureAndDisableAll('post-init-low-fps');
+                stopUnicorn('post-init-low-fps');
             }
         } catch (error) {
-            markGlobalFailureAndDisableAll('unicorn-init-error');
+            stopUnicorn('unicorn-init-error');
             console.error('Error initializing UnicornStudio', error);
         } finally {
             initPromise = null;
@@ -52,20 +46,32 @@ export async function initIfAllowed(embedEl?: HTMLElement | null) {
     return initPromise;
 }
 
-export function markGlobalFailureAndDisableAll(reason?: string) {
-    unicornInitialized = false;
-    performanceStore.update((s) => ({ ...s, globalHardDisabled: true, canUseWebgl: false, disableReason: reason ?? 'global-failure' }));
-    destroyAllIfAvailable();
-}
-
-export function destroyAllIfAvailable() {
+export function stopUnicorn(reason?: string) {
+    if (!unicornInitialized) return;
     try {
         if (typeof UnicornStudio !== 'undefined' && typeof UnicornStudio.destroy === 'function') {
             UnicornStudio.destroy();
         }
+
+        const canvases = document.querySelectorAll('canvas');
+        canvases.forEach((canvas) => {
+            canvas.width = 1;
+            canvas.height = 1;
+
+            const gl = canvas.getContext('webgl') || canvas.getContext('webgl2');
+            if (gl) {
+                gl.getExtension('WEBGL_lose_context')?.loseContext();
+            }
+
+            canvas.remove();
+        });
+
+        unicornInitialized = false;
+        performanceStore.update((s) => ({ ...s, globalHardDisabled: true, canUseWebgl: false, disableReason: reason ?? 'global-failure' }));
+        console.log('KILLED UNICORN DIE DIE DIE. this should fix the cpu thread issue');
     } catch (e) {
-        console.error('Error destroying UnicornStudio', e);
+        console.error('error trying to kill unicorn:', e);
     }
 }
 
-export default { initIfAllowed, markGlobalFailureAndDisableAll, destroyAllIfAvailable, resetUnicornLifecycle };
+export default { initIfAllowed, stopUnicorn };

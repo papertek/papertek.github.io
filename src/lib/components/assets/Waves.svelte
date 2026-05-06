@@ -1,44 +1,22 @@
 <script lang="ts">
-    import { onMount, tick } from 'svelte';
+    import { tick } from 'svelte';
     import performanceStore from '$lib/stores/performance.js';
-    import { initIfAllowed, resetUnicornLifecycle } from '$lib/utils/unicornLifecycle.js';
-    import { afterNavigate, beforeNavigate } from '$app/navigation';
+    import { initIfAllowed, stopUnicorn } from '$lib/utils/unicornLifecycle.js';
 
     let { style = '', className = '', wavesType = '', backgroundImage = '/images/waves.png', backgroundSize = 'cover' } = $props();
 
-    let useWebgl = $state(false);
-    let perfChecked = $state(false);
     let embedEl = $state<HTMLDivElement | null>(null);
-    let unicornStarted = false;
+    const active = $derived($performanceStore.checked && $performanceStore.canUseWebgl && !$performanceStore.globalHardDisabled);
 
-    async function startUnicorn() {
-        if (unicornStarted) return;
-        unicornStarted = true;
-        await tick();
-        await initIfAllowed(embedEl);
-    }
-
-    function doUnicornStuff() {
-        const unsubscribe = performanceStore.subscribe((state) => {
-            if (!state.checked) return;
-            if (state.canUseWebgl && !state.globalHardDisabled) {
-                useWebgl = true;
-                perfChecked = true;
-                startUnicorn().catch((e) => console.error('Unicorn init (waves) failed', e));
-            } else {
-                useWebgl = false;
-                perfChecked = false;
-            }
-        });
-
-        return () => {
-            unsubscribe();
-        };
-    }
-
-    // check unicornLifecycle.ts
-    onMount(() => {
-        doUnicornStuff();
+    $effect(() => {
+        if (active) {
+            tick().then(() => {
+                if (embedEl) initIfAllowed(embedEl);
+            });
+        } else {
+            stopUnicorn();
+        }
+        return () => stopUnicorn();
     });
 </script>
 
@@ -48,7 +26,7 @@
         style="background-image: url({backgroundImage}); background-size: {backgroundSize}; background-position: center;"
     ></div>
 
-    {#if useWebgl && perfChecked}
+    {#if active}
         <div
             bind:this={embedEl}
             class="unicorn-embed pointer-events-none absolute inset-0 z-1"

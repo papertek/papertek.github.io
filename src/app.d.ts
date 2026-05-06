@@ -11,6 +11,7 @@ declare global {
 
     interface UnicornStudioNamespace {
         init(): Promise<any>;
+        destroy(): void;
     }
 
     const UnicornStudio: UnicornStudioNamespace;
