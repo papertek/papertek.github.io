@@ -1,5 +1,5 @@
 import performanceStore from '$lib/stores/performance.js';
-import { DEFAULT_FPS_THRESHOLD, fpsMonitor } from '$lib/utils/performanceCheck.js';
+import { DEFAULT_FPS_THRESHOLD, fpsMonitor, cachePostInitFpsDecision } from '$lib/utils/performanceCheck.js';
 import { get } from 'svelte/store';
 
 let initPromise: Promise<void> | null = null;
@@ -31,6 +31,8 @@ export async function initIfAllowed(embedEl?: HTMLElement | null) {
                 canUseWebgl: !shouldDisable,
                 disableReason: shouldDisable ? 'post-init-low-fps' : null
             }));
+
+            cachePostInitFpsDecision(postInitFps, !shouldDisable, shouldDisable ? 'post-init-low-fps' : null);
 
             if (shouldDisable) {
                 stopUnicorn('post-init-low-fps');

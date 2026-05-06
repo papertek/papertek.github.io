@@ -14,6 +14,7 @@ type PersistedPerformanceCheck = {
     timestamp: number;
     canUseWebgl: boolean;
     initialFps: number | null;
+    postInitFps: number | null;
     disableReason: string | null;
 };
 
@@ -62,6 +63,7 @@ export async function runGlobalPerformanceCheck(opts?: { duration?: number; fpsT
                             checked: true,
                             canUseWebgl: cached.canUseWebgl,
                             initialFps: cached.initialFps,
+                            postInitFps: cached.postInitFps,
                             disableReason: cached.disableReason
                         }));
                         return;
@@ -80,10 +82,12 @@ export async function runGlobalPerformanceCheck(opts?: { duration?: number; fpsT
 
             if (browser) {
                 try {
+                    const current = get(performanceStore);
                     const payload: PersistedPerformanceCheck = {
                         timestamp: Date.now(),
                         canUseWebgl: can,
                         initialFps,
+                        postInitFps: current.postInitFps,
                         disableReason
                     };
                     localStorage.setItem(PERFORMANCE_CHECK_STORAGE_KEY, JSON.stringify(payload));
@@ -98,6 +102,26 @@ export async function runGlobalPerformanceCheck(opts?: { duration?: number; fpsT
     })();
 
     return cachedCheck;
+}
+
+export function cachePostInitFpsDecision(postInitFps: number | null, canUseWebgl: boolean, disableReason: string | null) {
+    if (browser) {
+        try {
+            const raw = localStorage.getItem(PERFORMANCE_CHECK_STORAGE_KEY);
+            if (raw) {
+                const cached = JSON.parse(raw) as PersistedPerformanceCheck;
+                const updated: PersistedPerformanceCheck = {
+                    ...cached,
+                    postInitFps,
+                    canUseWebgl,
+                    disableReason
+                };
+                localStorage.setItem(PERFORMANCE_CHECK_STORAGE_KEY, JSON.stringify(updated));
+            }
+        } catch (e) {
+            console.warn('Unable to update performance check cache with post-init results', e);
+        }
+    }
 }
 
 export default runGlobalPerformanceCheck;
