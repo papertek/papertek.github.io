@@ -1,6 +1,8 @@
 import type { Article, MdsvexModule } from '$lib/utils/types.ts';
 import { json } from '@sveltejs/kit';
 
+export const prerender = true;
+
 async function getArticles(articleType?: string) {
     let articles: Article[] = [];
 
