@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="600" alt="netro logo" src="https://github.com/NetroSoftware/NetroWorks/blob/main/static/images/logo-blue.svg?raw=true">
+  <img width="600" alt="netro logo" src="https://github.com/NetroSoftware/NetroWorks/blob/main/static/images/placeholders/logo-blue.svg?raw=true">
 </p>
 
 # Project NetroWorks (NetroWeb V4)
