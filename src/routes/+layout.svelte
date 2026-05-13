@@ -5,6 +5,7 @@
     import Waves from '$lib/components/assets/Waves.svelte';
     import DevBanner from '$lib/components/DevBanner.svelte';
     import Footer from '$lib/components/Footer.svelte';
+    import Header from '$lib/components/Header.svelte';
     import { onMount, type Snippet } from 'svelte';
     import '../styles/tailwind.css';
 
@@ -19,7 +20,10 @@
     let showGlobe = $derived(page.url.pathname === '/');
 </script>
 
-<main class="font-display flex flex-col px-21 py-16">
+{#if !page?.data?.hideHeader}
+    <Header />
+{/if}
+<main class="font-display 3xl:mx-auto flex max-w-560 flex-col px-5 py-10 lg:px-21 lg:py-16">
     <!-- this displays in the homepage only -->
     <div class="pointer-events-none absolute inset-0 overflow-hidden" class:invisible={!showGlobe}>
         <NetroGlobe

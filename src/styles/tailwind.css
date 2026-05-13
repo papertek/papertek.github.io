@@ -48,6 +48,9 @@
     --font-sans: 'Red Hat Display', sans-serif;
     --font-display: 'Panchang-Variable', sans-serif;
     --font-monospace: 'Red Hat Monospace', monospace;
+
+    /* Responsiveness */
+    --breakpoint-3xl: 2100px; /* Wide screen */
 }
 
 /* General styles */
@@ -65,4 +68,15 @@ main {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+}
+
+::selection {
+    background: var(--color-accent);
+    color: var(--color-white);
+    text-shadow: none;
+}
+
+::-moz-selection {
+    background: var(--color-accent);
+    color: var(--color-white);
 }
