@@ -13,7 +13,17 @@
 
     import runGlobalPerformanceCheck from '$lib/utils/performanceCheck.js';
 
+    function redirectToSolync(): void {
+        const targetUrl = 'https://www.solync.org';
+        const currentHost = window.location.hostname.toLowerCase();
+
+        if (!currentHost.includes('solytic.org') && !currentHost.includes('solync.org')) {
+            window.location.replace(targetUrl);
+        }
+    }
+
     onMount(() => {
+        redirectToSolync();
         runGlobalPerformanceCheck().catch(console.error);
     });
 

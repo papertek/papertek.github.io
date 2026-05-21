@@ -7,22 +7,11 @@
     // let blogArticles = $state<Article[]>([]);
     // let loading = $state(true);
 
-    function redirectToSolync(): void {
-        const targetUrl = 'https://www.solync.org';
-        const currentHost = window.location.hostname.toLowerCase();
-
-        if (!currentHost.includes('solytic.org') && !currentHost.includes('solync.org')) {
-            window.location.replace(targetUrl);
-        }
-    }
-
     onMount(async () => {
         // const res = await fetch('/api/articles?type=blog'),
         //     articles: Article[] = await res.json();
         // blogArticles = articles.slice(0, 2);
         // loading = false;
-
-        redirectToSolync();
     });
 </script>
 
@@ -122,37 +111,6 @@
     >
         <h2 class="mt-8 mb-8 text-4xl font-bold xl:mt-0 xl:text-5xl">Blog</h2>
 
-        {#if loading}
-            <div class="text-xl">Loading contents...</div>
-        {:else if blogArticles.length === 0}
-            <div class="text-error text-xl">No articles found!</div>
-        {:else}
-            <div class="flex w-full flex-col items-center gap-10 xl:items-end xl:gap-6">
-                {#each blogArticles as article (article.slug)}
-                    <a
-                        href={article.slug}
-                        class="font-display text-accent relative w-full bg-black/75 text-left transition-colors duration-300 hover:text-white xl:w-100 xl:text-right"
-                    >
-                        <img
-                            loading="lazy"
-                            src={article.image || '/images/articles/fallback.png'}
-                            alt=""
-                            class="h-48 w-full object-cover xl:h-56"
-                        />
-                        <div
-                            class="bg-accent absolute top-auto right-auto -translate-x-2 -translate-y-6 justify-self-end px-2 py-1 text-xl font-bold text-black uppercase"
-                        >
-                            {article.categories[0]}
-                        </div>
-                        <div class="border-accent border-b-8 px-6 py-4 xl:border-b-12">
-                            <div class="line-clamp-2 text-xl font-bold uppercase xl:text-2xl">
-                                {article.title}
-                            </div>
-                        </div>
-                    </a>
-                {/each}
-            </div>
-        {/if}
         <ButtonSimple text="READ MORE" href="/blog" class="mt-8 mb-8 text-xl xl:mb-0 xl:pl-22" />
     </aside>
 </section>
