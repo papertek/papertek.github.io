@@ -4,14 +4,25 @@
     import type { Article } from '$lib/utils/types.js';
     import { onMount } from 'svelte';
 
-    let blogArticles = $state<Article[]>([]);
-    let loading = $state(true);
+    // let blogArticles = $state<Article[]>([]);
+    // let loading = $state(true);
+
+    function redirectToSolync(): void {
+        const targetUrl = 'https://www.solync.org';
+        const currentHost = window.location.hostname.toLowerCase();
+
+        if (!currentHost.includes('solytic.org') && !currentHost.includes('solync.org')) {
+            window.location.replace(targetUrl);
+        }
+    }
 
     onMount(async () => {
-        const res = await fetch('/api/articles?type=blog'),
-            articles: Article[] = await res.json();
-        blogArticles = articles.slice(0, 2);
-        loading = false;
+        // const res = await fetch('/api/articles?type=blog'),
+        //     articles: Article[] = await res.json();
+        // blogArticles = articles.slice(0, 2);
+        // loading = false;
+
+        redirectToSolync();
     });
 </script>
 
